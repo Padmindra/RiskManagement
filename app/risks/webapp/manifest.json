@@ -28,12 +28,12 @@
         },
         "crossNavigation": {
             "inbounds": {
-                "risks-inbound": {
+                "Risks-display": {
                     "signature": {
                         "parameters": {},
                         "additionalParameters": "allowed"
                     },
-                    "semanticObject": "risks",
+                    "semanticObject": "Risks",
                     "action": "display",
                     "title": "{{flpTitle}}",
                     "subTitle": "{{flpSubtitle}}",
@@ -148,5 +148,9 @@
     "sap.fiori": {
         "registrationIds": [],
         "archeType": "transactional"
+    },
+    "sap.cloud": {
+        "public": true,
+        "service": "cpapp.service"
     }
 }

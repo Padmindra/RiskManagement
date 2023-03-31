@@ -8,6 +8,7 @@ modules:
   path: gen/srv
   requires:
   - name: risk-management-db
+  - name: risk-management-auth
   provides:
   - name: srv-api
     properties:
@@ -47,6 +48,43 @@ modules:
     - npm install
     - npm run build:cf
     supported-platforms: []
+- name: cpapp-destinations
+  type: com.sap.application.content
+  requires:
+  - name: risk-management-auth
+    parameters:
+      service-key:
+        name: risk-management-auth-key
+  - name: risk-management-repo-host
+    parameters:
+      service-key:
+        name: risk-management-repo-host-key
+  - name: srv-api
+  - name: risk-management-destination-service
+    parameters:
+      content-target: true
+  parameters:
+    content:
+      instance:
+        destinations:
+        - Authentication: OAuth2UserTokenExchange
+          Name: risk-management-srv
+          TokenServiceInstanceName: risk-management-auth
+          TokenServiceKeyName: risk-management-auth-key
+          URL: ~{srv-api/srv-url}
+          sap.cloud.service: cpapp.service
+        - Name: risk-management-repo-host
+          ServiceInstanceName: risk-management-repo-host
+          ServiceKeyName: risk-management-repo-host-key
+          sap.cloud.service: cpapp.service
+        - Authentication: OAuth2UserTokenExchange
+          Name: risk-management-auth
+          ServiceInstanceName: risk-management-auth
+          ServiceKeyName: risk-management-auth-key
+          sap.cloud.service: cpapp.service
+        existing_destinations_policy: update
+  build-parameters:
+    no-source: true
 resources:
 - name: risk-management-db
   type: com.sap.xs.hdi-container
@@ -57,13 +95,12 @@ resources:
   type: org.cloudfoundry.managed-service
   parameters:
     service: html5-apps-repo
-    service-name: risk-management-html5-srv
     service-plan: app-host
 - name: risk-management-destination-service
   type: org.cloudfoundry.managed-service
   parameters:
     config:
-      HTML5Runtime_enabled: false
+      HTML5Runtime_enabled: true
       init_data:
         instance:
           destinations:
@@ -77,6 +114,15 @@ resources:
     service: destination
     service-name: risk-management-destination-service
     service-plan: lite
+- name: risk-management-auth
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      tenant-mode: dedicated
+      xsappname: risk-management-${org}-${space}
+    path: ./xs-security.json
+    service: xsuaa
+    service-plan: application
 parameters:
   deploy_mode: html5-repo
   enable-parallel-deployments: true
@@ -84,4 +130,6 @@ build-parameters:
   before-all:
   - builder: custom
     commands:
+    - npm install --production
     - npx -p @sap/cds-dk cds build --production
+    - npx rimraf gen/db/src/gen/data
