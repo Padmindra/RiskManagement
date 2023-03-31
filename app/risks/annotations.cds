@@ -5,27 +5,27 @@ annotate service.Risks with @(
         {
             $Type : 'UI.DataField',
             Label : 'title',
-            Value : title,
+            Value : Title,
         },
         {
             $Type : 'UI.DataField',
             Label : 'owner',
-            Value : owner,
+            Value : Owner,
         },
         {
             $Type : 'UI.DataField',
             Label : 'prio',
-            Value : prio,
+            Value : Prio,
         },
         {
             $Type : 'UI.DataField',
             Label : 'descr',
-            Value : descr,
+            Value : Description,
         },
         {
             $Type : 'UI.DataField',
             Label : 'impact',
-            Value : impact,
+            Value : Impact,
         },
     ]
 );
